@@ -2,135 +2,32 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<title></title>
-	<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
-
-	<style>
-
-		body {
-			font-family: 'Noto Sans', sans-serif;
-			font-size: 13px;
-			background-color: #dcdcdc;
-			padding: 25px;
-
-		}
-
-		form {
-			text-align: center;
-		}
-
-		input {
-			width: 100px;
-			height: 23px;
-			text-align: center;
-			border: 1px solid gray;
-			box-shadow: none;
-			font-size: 17px;
-		}
-
-		input:focus {
-			outline: none;
-		}
-
-		input:required:invalid {
-			background-color: #db6057;
-		}
-
-		input:required:valid {
-			background-color: #b8db86;
-		}
-
-		td {
-			text-align: center;
-		}
-
-		table {
-			box-shadow: 0 0 2px 0 black;
-			border-spacing: 5px;
-			background-color: #e7e7e7;
-
-		}
-
-		#table-top {
-			border: 1px solid gray;
-			padding: 5px;
-		}
-
-
-
-		p {
-			font-weight: bold;
-		}
-
-		 span {
-			font-size: 20px;
-		}
-
-		#outputProbit:hover {
-			cursor: pointer;
-
-		}
-
-
-
-
-
-
-		#tab {
-			margin: 0 auto;
-			display: table;
-			width: 602px;
-
-		}
-
-
-
-
-
-
-
-
-
-
-	</style>
-
+	<title>LD50 by Finney</title>
+	<link href='style.css' rel='stylesheet' type='text/css'>
 
 </head>
 <body>
 
-
-
-
-
 <div id="tab">
-
-
 	<p>Настоящее приложение позволяет произвести расчет значений летальных доз (ЛД50 ± S, ЛД84, ЛД16)
 	на основании данных, полученных в остром эксперименте на лабораторных животных по методу Финни.</p>
-
 	<p>В каждой строке вводятся данные для одной группы животных.</p>
-	<p>В строке под цифрой 1 всегда вводятся данные для группы животных с процентом гибели равным 0.</p>
+	<p>В строке под номером 1 всегда вводятся данные для группы животных с процентом гибели равным 0.</p>
 	<p>Далее вводятся данные для групп с процентом гибели более 0 и менее 100 по нарастающей,
 	от меньшего к большему</p>
-
-	<p>Для ввода дробных значений в поле «доза» используется точка в качестве разделителя.</p>
-
-
-
-
+	<p>В последней строке вводятся данные для группы животным с процентом гибели 100</p>
+	<p>Число экспериментальных групп должно соответствовать числу заполненных строк!</p>
+	<p>Для ввода дробных значений в поле «доза» в качестве разделителя используется либо точка либо запятая либо возможно сочетание этих знаков.
+	(будьте внимательны - дозы испытуемых веществ должны выражаться в одних единицах (концентрациях)!!!)</p>
 
 	<table>
 
 		<tr>
 			<td colspan="4" id="table-top">
-
-				<span style="margin-right: 10px;">
+				<span>
 				Общее число экспериментальных групп (3-10):</span>
-
 				<input type="number" id="groupNumber" min="3" max="10" required>
-
 			</td>
-
 		</tr>
 
 		<tr>
@@ -215,203 +112,14 @@
 
 	<br>
 
-
-
-
-
-
-
 	<input type="button" value="Результат" id="outputProbit">
-
-
-
 		<p>ЛД50 (±S): <span id="ld50"></span> </p>
 		<p>ЛД84: <span id="ld84"></span> </p>
 		<p>ЛД16: <span id="ld16"></span> </p>
-
-
 </div>
 
-
-
-
-
-<script>
-	"use strict";
-
-
-	/*Probit-value array - relation between number of animals per group and number of
-	 * effects per group */
-	var probitArray = [
-		[3.62, 4.57, 5.43, 6.38], /*Number of animals in group: 3, from left to right - increasing  effect */
-		[3.47, 4.33, 5.00, 5.67, 6.53], /*4*/
-		[3.36, 4.16, 4.75, 5.25, 5.84, 6.64], /*5*/
-		[3.27, 4.03, 4.57, 5.00, 5.43, 5.97, 6.73], /*6*/
-		[3.20, 3.93, 4.43, 4.82, 5.18, 5.57, 6.07, 6.80], /*7*/
-		[3.13, 3.85, 4.33, 4.68, 5.00, 5.32, 5.67, 6.15, 6.87], /*8*/
-		[3.09, 3.78, 4.23, 4.57, 4.86, 5.14, 5.43, 5.77, 6.22, 6.91], /*9*/
-		[3.04, 3.72, 4.16, 4.48, 4.75, 5.00, 5.25, 5.52, 5.84, 6.28, 6.96], /*10*/
-		[3.00, 3.67, 4.09, 4.40, 4.65, 4.89, 5.11, 5.35, 5.60, 5.91, 6.33, 7.00], /*11*/
-		[2.97, 3.61, 4.03, 4.33, 4.57, 4.79, 5.00, 5.21, 5.43, 5.67, 5.97, 6.39, 7.03], /*12*/
-		[2.93, 3.57, 3.98, 4.26, 4.50, 4.71, 4.90, 5.10, 5.29, 5.50, 5.74, 6.02, 6.43, 7.07], /*13*/
-		[2.90, 3.53, 3.93, 4.21, 4.43, 4.63, 4.82, 5.00, 5.18, 5.37, 5.57, 5.79, 6.07, 6.47, 7.10], /*14*/
-		[2.87, 3.50, 3.89, 4.16, 4.38, 4.57, 4.75, 4.92, 5.08, 5.25, 5.43, 5.62, 5.84, 6.11, 6.50, 7.13] /*15*/
-	];
-
-
-	/*Probit-weight array*/
-	var probitWeightArray = [
-		3.0, 1.0, 3.1, 1.2, 3.2, 1.4, 3.3, 1.6, 3.4, 1.8, 3.5, 2.0,
-		3.6, 2.3, 3.7, 2.6, 3.8, 2.9, 3.9, 3.2, 4.0, 3.5, 4.1, 3.7,
-		4.2, 3.9, 4.3, 4.1, 4.4, 4.3, 4.5, 4.5, 4.6, 4.6, 4.7, 4.7,
-		4.8, 4.8, 4.9, 4.9, 5.0, 5.0, 5.1, 4.9, 5.2, 4.8, 5.3, 4.7,
-		5.4, 4.6, 5.5, 4.5, 5.6, 4.3, 5.7, 4.1, 5.8, 3.9, 5.9, 3.7,
-		6.0, 3.5, 6.1, 3.2, 6.2, 2.9, 6.3, 2.6, 6.4, 2.3, 6.5, 2.0,
-		6.6, 1.8, 6.7, 1.6, 6.8, 1.4, 6.9, 1.2, 7.0, 1.0, 7.1, 0.8,
-		7.2, 0.7, 7.3, 0.5, 7.4, 0.4, 7.5, 0.3, 7.6, 0.3, 7.7, 0.2,
-		7.8, 0.1, 7.9, 0.0
-	];
-
-	/*result-button function*/
-	document.getElementById("outputProbit").onclick = function() {
-
-
-		/*get number of groups*/
-		var groupNumber = Number(document.getElementById("groupNumber").value);
-
-		/**
-		 * Gets the value of inputDose, numberInGroup, effectInGroup
-		 * @param {number} groupNumber
-		 * @return {number} value of inputDose, numberInGroup, effectInGroup
-		 */
-
-		function Group(groupNumber) {
-
-			this.inputDose = Number(document.getElementById("inputDose" + groupNumber).value);
-			this.numberInGroup = Number(document.getElementById("inputNumberInGroup" + groupNumber).value);
-			this.effectInGroup = Number(document.getElementById("inputEffectInGroup" + groupNumber).value);
-
-
-
-		}
-
-
-		/*  Gets the value of probit and weight of probit*/
-
-
-
-		Group.prototype.probitAndWeight = function() {
-			/*get the probit*/
-			this.probit = (probitArray[this.numberInGroup - 3][this.effectInGroup]);
-
-			/*get the probit weight*/
-			this.interm = (Math.round(this.probit * 10) / 10);
-
-			for (var count = 0; count < probitWeightArray.length; count++)
-				if (this.interm == probitWeightArray[count]) {
-					this.probitWeight = probitWeightArray[count + 1];
-				}
-
-		};
-
-		/*get the calculations in obj*/
-		Group.prototype.calcInOneObj = function() {
-			this.calcMulti3 = this.inputDose * this.probit * this.probitWeight;
-			this.calcMulti4 = this.inputDose * this.probitWeight;
-			this.calcMulti5 = this.probit * this.probitWeight;
-			this.calcMulti6 = (Math.pow(this.inputDose, 2)) * this.probitWeight;
-
-		};
-
-				 /**
-					  * One group is one object. The function below creates
-				  * objects for each group, calculate necessary values per object,
-				  * makes summ of suitable values between the objects and return the LD50
-					  */
-
-		function lethalDose50Result() {
-
-
-			var arrObj = [];    /*array for objects*/
-
-					 /*summable values in one obj*/
-			var    summ2 = 0,
-					summ3 = 0,
-					summ4 = 0,
-					summ5 = 0,
-					summ6 = 0,
-
-/*value for LD50 error calculate*/
-					summAnimInExp = 0;
-
-					 /*creating objects*/
-			for (var i = 0; i < groupNumber; i++) {
-				arrObj[i] = new Group(i + 1);
-
-				if (arrObj[i].effectInGroup > arrObj[i].numberInGroup) {
-					alert ("Эффект в группе не может быть больше чем животных в группе");
-					return;
-
-				}
-
-
-
-					/*MAKE FUNCTION WHICH GET THIS ARRAY AND COMPUTE WITH IT !!!!!!!!!!!!!!!!!!!!!!!1*/
-				summAnimInExp += arrObj[i].numberInGroup;
-
-
-						arrObj[i].probitAndWeight();
-				arrObj[i].calcInOneObj();
-
-				summ2 += arrObj[i].probitWeight;
-				summ3 += arrObj[i].calcMulti3;
-				summ4 += arrObj[i].calcMulti4;
-				summ5 += arrObj[i].calcMulti5;
-				summ6 += arrObj[i].calcMulti6;
-
-				 }
-
-					/*subtraction the 0% and 100% probit*/
-					 summAnimInExp = summAnimInExp - arrObj[0].numberInGroup - arrObj[groupNumber - 1].numberInGroup;
-
-
-					 /*parameter 1*/
-					 var b1 = ((summ3 * summ2) - (summ4 * summ5)) / ((summ2 * summ6) - (summ4 * summ4));
-
-					 /*parameter 2*/
-					 var b0 = (summ5 - (b1 * summ4)) / (summ2);
-
-
-					 /*calculating doses*/ /*MAKE WITH FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
-					 var ld50 = (5 - b0) / b1;
-						ld50 = Math.round(ld50 * 100) / 100;
-
-					 var ld16 = (4 - b0) / b1;
-						ld16 = Math.round(ld16 * 100) / 100;
-
-					 var ld84 = (6 - b0) / b1;
-						ld84 = Math.round(ld84 * 100) / 100;
-
-					 /*error of LD50*/
-					 var errorLD50 =  (ld84 - ld16) / Math.sqrt(2 * summAnimInExp);
-						errorLD50 = Math.round(errorLD50 * 100) / 100;
-
-
-					 document.getElementById("ld50").innerHTML = ld50 + "±" + errorLD50;
-					 document.getElementById("ld16").innerHTML = ld16;
-					 document.getElementById("ld84").innerHTML = ld84;
-		}
-
-		lethalDose50Result();
-
-	};
-
-
-
-</script>
-
-
 </body>
+<script src="data.js"></script>
+<script src="implement.js"></script>
 
 </html>

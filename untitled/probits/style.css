@@ -1,0 +1,67 @@
+body {
+	font-size: 15px;
+	background-color: #dcdcdc;
+	padding: 25px;
+}
+
+form {
+	text-align: center;
+}
+
+input {
+	width: 100px;
+	height: 23px;
+	text-align: center;
+	border: 1px solid gray;
+	box-shadow: none;
+	font-size: 17px;
+}
+
+input:focus {
+	outline: none;
+}
+
+input:required:invalid {
+	background-color: #db6057;
+}
+
+input:required:valid {
+	background-color: #b8db86;
+}
+
+td {
+	text-align: center;
+}
+
+table {
+	box-shadow: 0 0 2px 0 black;
+	border-spacing: 5px;
+	background-color: #e7e7e7;
+}
+
+#table-top {
+	border: 1px solid gray;
+	padding: 5px;
+}
+
+p {
+	font-weight: bold;
+}
+
+span {
+	font-size: 20px;
+}
+
+#outputProbit:hover {
+	cursor: pointer;
+}
+
+#tab {
+	margin: 0 auto;
+	display: table;
+	width: 602px;
+}
+
+#table-top span {
+	margin-right: 10px;
+}
